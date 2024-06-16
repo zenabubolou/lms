@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const bodyParser = require('body-parser');
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const { check, validationResult } = require('express-validator');
 const app = express();
 
@@ -17,7 +17,7 @@ app.use(session({
 // Create MySQL connection
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: 'root',
+    user: '',
     password: '',
     database: 'learning_management'
 });
@@ -125,7 +125,9 @@ app.post('/login', (req, res) => {
                 if (err) throw err;
                 if (isMatch) {
                     // Store user in session
+
                     req.session.user = user;
+                    console.log(req.session.user)
                     res.send('Login successful');
                 } else {
                     res.status(401).send('Invalid username or password');
@@ -144,7 +146,8 @@ app.post('/logout', (req, res) => {
 //Dashboard route
 app.get('/dashboard', (req, res) => {
     // Assuming you have middleware to handle user authentication and store user information in req.user
-    const userFullName = req.user.full_name;
+    console.log(req.session)
+    const userFullName = req.session.user.full_name;
     res.render('dashboard', { fullName: userFullName });
 });
 
